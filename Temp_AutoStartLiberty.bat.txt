@@ -1,0 +1,34 @@
+@echo OFF
+title War building and Executing
+
+set projectFol=C:\Users\pkalwank\git\cp-des-ui
+set sourcePath=C:\Users\pkalwank\git\cp-des-ui\module-ear\target
+set libserver=C:\PRADIP\liberty\wlp
+	
+set destinationPath=%libserver%\usr\servers\defaultServer\apps
+set logpath=%libserver%\usr\servers\defaultServer\
+
+echo  "sourcePath : "%sourcePath%
+echo  "libserver : "%libserver%
+echo  "destinationPath : "%destinationPath%
+	
+cd %projectFol%
+
+call mvn clean
+echo Project Cleanned 
+call mvn package
+echo Project Packed
+copy  %sourcePath%"\*.ear" %destinationPath%
+
+if exist %destinationPath%"\*.ear" (
+	echo Packed Project Copied
+	call %libserver%\bin\server.bat start defaultServer
+	echo Project Starting...
+	timeout /t 150 /nobreak>nul
+	echo Project Started On Server. Check URLs
+	type %logpath%\logs\console.log
+	echo Press ENTER to stop the server (Note : Check your eclipse console)
+	pause >null 
+	call %libserver%\bin\server.bat stop defaultServer
+)
+pause
